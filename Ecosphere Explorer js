@@ -1,0 +1,38 @@
+// Ecosphere Explorer - Short JS
+const scoreEl = document.getElementById("score");
+const popup = document.getElementById("popup");
+const bname = document.getElementById("bname");
+const bfact = document.getElementById("bfact");
+const collect = document.getElementById("collect");
+
+let score = 0;
+let currentBiome = null;
+
+document.querySelectorAll(".biome").forEach(biome => {
+  biome.onclick = () => {
+    currentBiome = biome;
+    bname.textContent = biome.dataset.name;
+    bfact.textContent = biome.dataset.fact;
+    popup.classList.add("active");
+  };
+});
+
+collect.onclick = () => {
+  if (!currentBiome) return;
+  score += 10;
+  scoreEl.textContent = score;
+  currentBiome.animate(
+    [{ transform: "scale(1)" }, { transform: "scale(1.1)" }, { transform: "scale(1)" }],
+    { duration: 250 }
+  );
+  popup.classList.remove("active");
+  currentBiome = null;
+};
+
+popup.onclick = e => {
+  if (e.target === popup) popup.classList.remove("active");
+};
+
+document.onkeydown = e => {
+  if (e.key === "Escape") popup.classList.remove("active");
+};
