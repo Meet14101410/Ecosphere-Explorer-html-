@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ecosphere Explorer — Mini</title>
+<style>
+  :root{--bg:#081826;--card:#0f3a4b;--accent:#7bd389;color:#e6f6f5}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,var(--bg),#05232b);color:var(--accent);min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .wrap{width:920px;max-width:94%;padding:24px}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  h1{font-size:20px;margin:0}
+  .score{background:rgba(255,255,255,0.05);padding:8px 12px;border-radius:10px}
+  .field{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06));padding:28px;border-radius:14px;display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
+  .biome{width:140px;height:140px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--card);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.4);transition:transform .18s,box-shadow .18s}
+  .biome:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(0,0,0,0.5)}
+  .label{font-weight:700;margin-top:8px;color:var(--accent)}
+  .ocean{background:radial-gradient(circle at 30% 30%,#2da6d6,#1b6f8d)}
+  .forest{background:radial-gradient(circle at 30% 30%,#4bbf6b,#2b6a3a)}
+  .desert{background:radial-gradient(circle at 30% 30%,#ffd27a,#d08b2e)}
+  .tundra{background:radial-gradient(circle at 30% 30%,#cfe9ff,#6da6c7)}
+  .popup{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,7,0.6);visibility:hidden;opacity:0;transition:opacity .15s}
+  .popup.active{visibility:visible;opacity:1}
+  .card{background:var(--card);padding:18px;border-radius:12px;width:320px;color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+  .card h2{margin:0 0 8px 0;font-size:16px}
+  .btn{margin-top:12px;padding:8px 12px;border-radius:10px;border:0;background:linear-gradient(90deg,#2fb87a,#1c9b6b);color:#032014;font-weight:700;cursor:pointer}
+  footer{margin-top:12px;text-align:center;color:rgba(255,255,255,0.45);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Ecosphere Explorer</h1>
+    <div class="score">Score: <span id="score">0</span></div>
+  </header>
+
+  <main class="field" id="field">
+    <div class="biome ocean" data-name="Ocean" data-fact="Covers ~71% of Earth's surface and houses most of Earth's biodiversity.">
+      <div style="font-size:36px">🌊</div>
+      <div class="label">Ocean</div>
+    </div>
+
+    <div class="biome forest" data-name="Forest" data-fact="Forests provide oxygen, store carbon, and host many species.">
+      <div style="font-size:36px">🌳</div>
+      <div class="label">Forest</div>
+    </div>
+
+    <div class="biome desert" data-name="Desert" data-fact="Deserts have extreme temps and specially adapted flora and fauna.">
+      <div style="font-size:36px">🏜️</div>
+      <div class="label">Desert</div>
+    </div>
+
+    <div class="biome tundra" data-name="Tundra" data-fact="Cold, low-growing region with permafrost and unique life adapted to cold.">
+      <div style="font-size:36px">❄️</div>
+      <div class="label">Tundra</div>
+    </div>
+  </main>
+
+  <footer>Click a biome to explore — collect facts and points!</footer>
+</div>
+
+<!-- popup -->
+<div class="popup" id="popup">
+  <div class="card" id="card">
+    <h2 id="bname">Biome</h2>
+    <p id="bfact" style="line-height:1.35">Fact goes here.</p>
+    <button class="btn" id="collect">Explore & Collect (+10)</button>
+  </div>
+</div>
+
+<script>
+  const scoreEl = document.getElementById('score');
+  const popup = document.getElementById('popup');
+  const bname = document.getElementById('bname');
+  const bfact = document.getElementById('bfact');
+  const collect = document.getElementById('collect');
+  let score = 0;
+  let current = null;
+  document.querySelectorAll('.biome').forEach(b => {
+    b.addEventListener('click', () => {
+      current = b;
+      bname.textContent = b.dataset.name;
+      bfact.textContent = b.dataset.fact;
+      popup.classList.add('active');
+    });
+  });
+
+  collect.addEventListener('click', () => {
+    if (!current) return;
+    const gained = 10;
+    score += gained;
+    scoreEl.textContent = score;
+    // visual feedback: briefly pulse the biome
+    current.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }], { duration: 350 });
+    popup.classList.remove('active');
+    current = null;
+  });
+
+  // close on background click or escape
+  popup.addEventListener('click', (e)=>{ if(e.target===popup) popup.classList.remove('active') });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') popup.classList.remove('active') });
+</script>
+</body>
+</html>
+
